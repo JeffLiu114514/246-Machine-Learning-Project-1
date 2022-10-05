@@ -1,8 +1,6 @@
 import math
-
 import matplotlib.pyplot as plt
 import numpy as np
-from util import *
 
 
 def design_matrix(x, m):
@@ -57,10 +55,12 @@ def auto_fit(x, t, gamma):
         error_list.append(Erms)
         result_list.append([Erms, a, w, y])
     best_m = error_list.index(min(error_list))
+    best_result = result_list[best_m]
     print("Best polynomial is of degree ", best_m,
-          "\nRoot mean square error is ", result_list[best_m][0],
-          "\nParameters are ", result_list[best_m][2], "\n")
-    plot_result(x, t, result_list[best_m][3])
+          "\nRoot mean square error is ", best_result[0],
+          "\nParameters are ", best_result[2], "\n")
+    # plot_result(x, t, result_list[best_m][3])
+    return best_result
 
 
 def m_fit(x, t, a, gamma):
@@ -74,15 +74,16 @@ def m_fit(x, t, a, gamma):
     print("Fit ", a, " degree polynomial:",
           "\nRoot mean square error is ", Erms,
           "\nParameters are ", w, "\n")
-    plot_result(x, t, y)
+    # plot_result(x, t, y)
 
 
-def main():
-    x, t = read_input("levelOne/A")
-    gamma = 0.0000001
-    #auto_fit(x, t, gamma)
-    m_fit(x, t, 1, gamma)
-
-
-if __name__ == "__main__":
-    main()
+def k_fold(x, t, gamma, k):
+    size = x.size / k
+    klist_x = [x[i:i + size] for i in range(0, len(size), size)]
+    klist_t = [t[i:i + size] for i in range(0, len(size), size)]
+    for i in range(k):
+        test_x, test_t = klist_x[i], klist_t[i]
+        train_x, train_t = [], []
+        for j in range(1, k):
+            train_x += klist_x[j]
+            train_t += klist_t[j]
