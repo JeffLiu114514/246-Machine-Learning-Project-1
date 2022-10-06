@@ -2,6 +2,7 @@ import argparse
 import csv
 import numpy as np
 from calc import *
+from K_fold import *
 
 
 def read_input(dir):
@@ -22,10 +23,12 @@ def main():
     # parser.add_argument("--modelOutput", type = str)
     # parser.add_argument("--autofit", type = bool)
     # parser.add_argument("--info", type = bool)
-    x, t = read_input("levelOne/B")
-    gamma = 0.0000001
+    x, t = read_input("levelOne/A")
+    gamma = 1e-18
+    k = 10
     #auto_fit(x, t, gamma)
-    m_fit(x, t, 2, gamma)
+    #m_fit(x, t, 2, gamma)
+    k_fold(x, t, gamma, k)
 
 
 if __name__ == "__main__":

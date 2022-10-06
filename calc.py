@@ -77,13 +77,4 @@ def m_fit(x, t, a, gamma):
     # plot_result(x, t, y)
 
 
-def k_fold(x, t, gamma, k):
-    size = x.size / k
-    klist_x = [x[i:i + size] for i in range(0, len(size), size)]
-    klist_t = [t[i:i + size] for i in range(0, len(size), size)]
-    for i in range(k):
-        test_x, test_t = klist_x[i], klist_t[i]
-        train_x, train_t = [], []
-        for j in range(1, k):
-            train_x += klist_x[j]
-            train_t += klist_t[j]
+
