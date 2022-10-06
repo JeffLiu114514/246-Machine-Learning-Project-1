@@ -12,34 +12,46 @@ def fit(train_x, train_t, test_x, test_t, gamma, m):
     # test
     y = predict_y(w, test_x, m, n)
     Erms = get_Erms(y, test_t, n)
-    return Erms
+    return [Erms, w]  # np.array([[Erms], [test_x], [test_t], [y]])
 
 
-def k_fold(x, t, gamma, k):
-    # twoD_array = np.vstack((x, t)).T
-    # np.random.shuffle(twoD_array)
-    # shuffled_array = np.transpose(twoD_array)
-    # shuffled_x, shuffled_t = shuffled_array[0], shuffled_array[1]
+def k_fold(x, t, gamma, k, max_m):
+    twoD_array = np.vstack((x, t)).T
+    np.random.shuffle(twoD_array)
+    shuffled_array = np.transpose(twoD_array)
+    shuffled_x, shuffled_t = shuffled_array[0], shuffled_array[1]
 
-    shuffled_x, shuffled_t = x, t
+    # shuffled_x, shuffled_t = x, t
     size = math.ceil(x.size / k)
     klist_x = np.array([shuffled_x[i:i + size] for i in range(0, len(x), size)])
     klist_t = np.array([shuffled_t[i:i + size] for i in range(0, len(t), size)])
 
-    result_list_m = []
-    for m in range(20):  # loop m
-        result_list_k = []  # list of errors in k iterations with same m
+    erms_list_m = []
+    w_list_m = []
+    for m in range(max_m + 1):  # loop m
+        erms_list_k = []  # list of errors in k iterations with same m
+        w_list_k = []
         for i in range(k):
             test_x, test_t = np.array(klist_x[i]), np.array(klist_t[i])  # testing set
             train_x, train_t = np.empty(0), np.empty(0)
-            for j in range(1, k):  # training set
+            train_list = [a for a in range(k) if a != i]
+            for j in train_list:  # training set
                 train_x = np.concatenate((train_x, klist_x[j]), axis = 0)
                 train_t = np.concatenate((train_t, klist_t[j]), axis = 0)
             result = fit(train_x, train_t, test_x, test_t, gamma, m + 1)
-            result_list_k.append(result)
-        mean_error_k = sum(result_list_k) / k
-        result_list_m.append(mean_error_k)
+            erms_list_k.append(result[0])
+            w_list_k.append(result[1])
+            # result_list_k.append(result)
+        mean_w, mean_erms = sum(w_list_k)/k, sum(erms_list_k) / k
+        w_list_m.append(mean_w)
+        erms_list_m.append(mean_erms)
+        # result_this_m = result_list_k[0]
+        # for i in result_list_k[1:]:
+        #     result_this_m = np.hstack((result_this_m, i))
+        # result_list_m.append(result_this_m)
         print("Now is at degree ", m,
-              "\nAverage root mean square error is ", mean_error_k, "\n")
-    best_m = result_list_m.index(min(result_list_m))
-    print("The best m is ", best_m, " with ERMS ", result_list_m[best_m], "\n")
+              "\nAverage root mean square error is ", mean_erms,
+              "\nAverage weight is ", mean_w, "\n")
+    best_m = erms_list_m.index(min(erms_list_m))
+    print("The best m is ", best_m, " with ERMS ", erms_list_m[best_m], " with weights", w_list_m[best_m], "\n")
+    # plot_result(result_list_m[best_m][1], result_list_m[best_m][2], result_list_m[best_m][3])

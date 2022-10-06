@@ -23,12 +23,13 @@ def main():
     # parser.add_argument("--modelOutput", type = str)
     # parser.add_argument("--autofit", type = bool)
     # parser.add_argument("--info", type = bool)
-    x, t = read_input("levelOne/A")
+    x, t = read_input("levelOne/E")
     gamma = 1e-18
-    k = 10
+    k = 5
+    m = 20
     #auto_fit(x, t, gamma)
-    #m_fit(x, t, 2, gamma)
-    k_fold(x, t, gamma, k)
+    #m_fit(x, t, 1, gamma)
+    k_fold(x, t, gamma, k, m)
 
 
 if __name__ == "__main__":
