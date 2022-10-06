@@ -1,3 +1,6 @@
+# Name: Junfei Liu
+# Email: jliu137@u.rochester.edu
+
 import math
 import matplotlib.pyplot as plt
 import numpy as np
